@@ -250,7 +250,7 @@
                         Este es tu buzón seguro. Durante la semana recogemos cada estado de ánimo, agradecimiento o petición secreta, y los viernes, sábados y domingos nos unimos con todo para orar por ti. Si hoy vienes triste o abrumado, tranquilo: se vale no estar bien y no estás solo. ¡Usa los botones de abajo, deposita tu mensaje y hagamos equipo con Jesús! ❤️📥
                     </p>
                     
-                    <span class="badge-schedule">📆 Cobertura: De Viernes, Sábado y Domingo ⏰ 6:00 AM y 8:30 PM (En Punto)</span>
+                    <span class="badge-schedule">📆 <span id="txt-horario-seccion1">Cobertura: De Viernes, Sábado y Domingo ⏰ 6:00 AM y 8:30 PM (En Punto)</span></span>
 
                     <p style="color: #fbbf24; font-size: 0.95rem; font-weight: 700; text-align: center; margin-top: 20px; margin-bottom: 15px;">
                         Elige los botones que mejor vayan contigo hoy y hablemos con Jesús. ¡Estamos listos para apoyarte!
@@ -334,13 +334,13 @@
 
                     <div class="badge-schedule" style="background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color: #e9d5ff; display: block; text-align: center; margin-top: 24px; line-height: 1.6; border-radius: 12px; padding: 12px;">
                         ☀️ MI MAÑANA CON JESÚS ☀️<br>
-                        Briefing: De Lunes a Sábado ⏰ 5:00 AM (En Punto)<br>
+                        <span id="txt-horario-seccion2">Horario: De Lunes a Sábado ⏰ 5:00 AM (En Punto)</span><br>
                         ¡Arranca tu día hablando con Él! ¡Te esperamos en el Live!
                     </div>
 
                     <!-- 🛠️ BOTÓN DE CONTROL MANUAL (SOLO PARA TI COMO CREADOR) -->
                     <div class="panel-solo-dueno" style="display: none; margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
-                        <p style="font-size: 0.75rem; color: #64748b; margin-bottom: 8px; font-weight: 600;">🎛️ PANEL DEL CREADOR (Presiona para simular tu transmisión):</p>
+                        <p style="font-size: 0.75rem; color: #64748b; margin-bottom: 8px; font-weight: 600;">🎛️ PANEL DEL CREADOR (control manual de respaldo — la hoja de Excel manda por encima de este botón):</p>
                         <button type="button" onclick="intercambiarTransmisionManual()" id="btn-control-creador" style="background: #1e293b; border: 1px solid #334155; color: #94a3b8; font-size: 0.75rem; font-weight: 700; padding: 8px 16px; border-radius: 10px; cursor: pointer; transition: all 0.2s;">
                             🔴 ENCENDER MODO EN VIVO
                         </button>
@@ -367,10 +367,10 @@
                     <!-- ⏳ CUADRO DE ESTADO DINÁMICO (MODO ESPERA POR DEFECTO) -->
                     <div id="contenedor-campana-estado" style="background: #020617; border: 1px solid #1e293b; padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
                         <p style="font-size: 0.95rem; color: #94a3b8; line-height: 1.6;">
-                            💤 <span style="color: #fbbf24; font-weight: bold;">Modo Espera:</span> "Preparando la próxima temporada... Mantente atento a nuestras redes para conocer la próxima fecha especial."
+                            💤 <span style="color: #fbbf24; font-weight: bold;">Modo Espera:</span> "<span id="txt-horario-campana-espera">Preparando la próxima temporada... Mantente atento a nuestras redes para conocer la próxima fecha especial.</span>"
                         </p>
                         <span style="font-size: 0.7rem; color: #475569; display: block; margin-top: 6px; font-family: monospace;">
-                            📅 Próxima fecha: [Coloca la Fecha] | ⏰ Horarios especiales en vivo. ¡No te pierdas los detalles!
+                            📅 <span id="txt-fecha-campana-espera">Próxima fecha: [Coloca la Fecha] | ⏰ Horarios especiales en vivo. ¡No te pierdas los detalles!</span>
                         </span>
                     </div>
 
@@ -399,7 +399,7 @@
 
                     <!-- 🎛️ PANEL DEL CREADOR (SISTEMA DE PRUEBA DE CAMPAÑA) -->
                     <div class="panel-solo-dueno" style="display: none; margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
-                        <p style="font-size: 0.75rem; color: #475569; margin-bottom: 8px; font-weight: 600;">🎛️ PANEL DEL CREADOR (Simula el lanzamiento de tu Campaña):</p>
+                        <p style="font-size: 0.75rem; color: #475569; margin-bottom: 8px; font-weight: 600;">🎛️ PANEL DEL CREADOR (control manual de respaldo — la hoja de Excel manda por encima de este botón):</p>
                         <button type="button" onclick="intercambiarCampanaManual()" id="btn-control-campana" style="background: #1e293b; border: 1px solid #334155; color: #94a3b8; font-size: 0.75rem; font-weight: 700; padding: 8px 16px; border-radius: 10px; cursor: pointer; transition: all 0.2s;">
                             🔥 ACTIVAR MODO CAMPAÑA
                         </button>
@@ -715,6 +715,13 @@ function depositarEnElBuzonFinal() {
         let enVivoActivo = false;
 
         function intercambiarTransmisionManual() {
+            aplicarEstadoTransmision(!enVivoActivo);
+        }
+
+        // 🎯 Función reutilizable: aplica el estado EN VIVO / NO EN VIVO a toda la
+        // interfaz de la Sección 2. La llama tanto el botón manual del creador
+        // como la sincronización automática con Google Sheets.
+        function aplicarEstadoTransmision(activo) {
             const pNav = document.getElementById('punto-transmision');
             const cLive = document.getElementById('circulo-alerta-live');
             const txtLive = document.getElementById('texto-transmision');
@@ -723,7 +730,7 @@ function depositarEnElBuzonFinal() {
             const bFb = document.getElementById('boton-fb-live');
             const ctrl = document.getElementById('btn-control-creador');
 
-            enVivoActivo = !enVivoActivo;
+            enVivoActivo = activo;
 
             const botones = [bIg, bTt, bFb].filter(Boolean);
 
@@ -782,8 +789,25 @@ function depositarEnElBuzonFinal() {
         }
 
          // ========================================================
-        // ⚡ MOTOR MAESTRO UNIFICADO: SECCIÓN 4 (MISIÓN GLOBAL)
+        // ⚡ MOTOR MAESTRO UNIFICADO: LEE TODA LA CONFIGURACIÓN DESDE
+        // TU HOJA DE GOOGLE SHEETS (misión, horarios, en vivo, campaña)
         // ========================================================
+        //
+        // 📋 COLUMNAS QUE DEBE TENER TU HOJA (fila 1 = encabezados,
+        // fila 2 = tus valores reales; usa las letras A a K):
+        //
+        //  A: Porcentaje            -> Ej: 65
+        //  B: PaisOracion           -> Ej: India
+        //  C: MetaMisioneros        -> Ej: 15
+        //  D: HorarioSeccion1       -> Ej: Cobertura: De Viernes, Sábado y Domingo ⏰ 6:00 AM y 8:30 PM (En Punto)
+        //  E: HorarioSeccion2       -> Ej: Briefing: De Lunes a Sábado ⏰ 5:00 AM (En Punto)
+        //  F: EnVivo                -> Escribe SI para encender el en vivo, NO para apagarlo
+        //  G: HorarioEsperaCampana  -> Texto del "Modo Espera" (Sección 3)
+        //  H: FechaEsperaCampana    -> Texto de la fecha/horario en "Modo Espera" (Sección 3)
+        //  I: HorarioCampanaActiva -> Texto que aparece cuando la campaña está ACTIVADA
+        //  J: FechaCampanaActiva   -> Fechas/horario que aparecen cuando la campaña está ACTIVADA
+        //  K: CampanaActiva         -> Escribe SI para activar el modo campaña, NO para el modo espera
+        //
         async function sincronizarSeccionMisiones() {
             configurarEnlacesHazloVisible();
 
@@ -810,16 +834,51 @@ function depositarEnElBuzonFinal() {
                 if (!filas.length) throw new Error("La hoja no contiene filas de datos (revisa que la fila 2 tenga tus valores).");
 
                 const celdas = filas[0].c || [];
-                const porcentaje = Number(celdas[0]?.v);
-                const pais = String(celdas[1]?.v || "").trim();
-                const meta = String(celdas[2]?.v || "").trim();
+                const leerTexto = (i) => {
+                    const val = celdas[i]?.v;
+                    return (val === undefined || val === null) ? "" : String(val).trim();
+                };
+                const leerBooleano = (i) => {
+                    const val = leerTexto(i).toLowerCase();
+                    return val === "si" || val === "sí" || val === "true" || val === "1" || val === "activo" || val === "activado";
+                };
 
+                // --- Gráfica de misión (columnas A, B, C) — sin tocar su lógica interna ---
+                const porcentaje = Number(celdas[0]?.v);
+                const pais = leerTexto(1);
+                const meta = leerTexto(2);
                 if (!Number.isFinite(porcentaje) || !pais) {
                     throw new Error("La fila de la hoja no contiene porcentaje y país válidos.");
                 }
-
                 actualizarMisionGlobal(porcentaje, pais, meta || DANIEL_CONFIG.metaMisionerosRespaldo);
-                console.log("✅ Gráfica de misiones sincronizada con Google Sheets:", { porcentaje, pais, meta });
+
+                // --- Horario Sección 1: Hablemos con Jesús (columna D) ---
+                const horarioSeccion1 = leerTexto(3);
+                const elHorario1 = document.getElementById('txt-horario-seccion1');
+                if (elHorario1 && horarioSeccion1) elHorario1.innerText = horarioSeccion1;
+
+                // --- Horario Sección 2: Mi Mañana con Jesús (columna E) ---
+                const horarioSeccion2 = leerTexto(4);
+                const elHorario2 = document.getElementById('txt-horario-seccion2');
+                if (elHorario2 && horarioSeccion2) elHorario2.innerText = horarioSeccion2;
+
+                // --- En vivo Sección 2, controlado 100% desde la hoja (columna F) ---
+                aplicarEstadoTransmision(leerBooleano(5));
+
+                // --- Sección 3: textos de "Modo Espera" (columnas G y H) ---
+                const horarioEspera = leerTexto(6);
+                const fechaEspera = leerTexto(7);
+                textoCampanaEsperaGuardado.horario = horarioEspera || textoCampanaEsperaGuardado.horario;
+                textoCampanaEsperaGuardado.fecha = fechaEspera || textoCampanaEsperaGuardado.fecha;
+
+                // --- Sección 3: textos de "Modo Campaña Activada" (columnas I y J) ---
+                textoCampanaActivaGuardado.horario = leerTexto(8) || textoCampanaActivaGuardado.horario;
+                textoCampanaActivaGuardado.fecha = leerTexto(9) || textoCampanaActivaGuardado.fecha;
+
+                // --- Campaña activa/inactiva, controlado 100% desde la hoja (columna K) ---
+                aplicarEstadoCampana(leerBooleano(10));
+
+                console.log("✅ Configuración sincronizada con Google Sheets:", { porcentaje, pais, meta, horarioSeccion1, horarioSeccion2, enVivo: leerBooleano(5), horarioEspera, fechaEspera, campanaActiva: leerBooleano(10) });
             } catch (error) {
                 console.warn("⚠️ No se pudo sincronizar con Google Sheets. Usando valores de respaldo. Motivo:", error.message || error);
                 cargarValoresRespaldoMisiones();
@@ -856,15 +915,41 @@ function depositarEnElBuzonFinal() {
             );
         }
 
-        // Activamos la carga de misiones inmediatamente
+        // Activamos la carga de configuración inmediatamente...
         sincronizarSeccionMisiones();
+        // ...y la repetimos cada 30 segundos para que, cuando edites tu hoja
+        // de Google Sheets, la web se actualice sola sin que nadie tenga que
+        // recargar la página manualmente.
+        setInterval(sincronizarSeccionMisiones, 30000);
 
         // ========================================================
         // 🔥 MOTOR DE CAMPAÑA: SECCIÓN 3 (HABLEMOS DE ÉL)
         // ========================================================
         let estadoCampanaSimulado = false;
 
+        // Guarda el último texto de "Modo Campaña Activada" leído de la hoja,
+        // para poder redibujarlo tanto desde la sincronización automática
+        // como desde el botón manual de respaldo del creador.
+        const textoCampanaActivaGuardado = {
+            horario: "Esta semana vamos más profundo. ¡Conéctate con nosotros!",
+            fecha: "Del 10 al 20 de Agosto | ⏰ 8:00 PM En Vivo"
+        };
+
+        // Guarda el último texto de "Modo Espera" leído de la hoja (columnas G y H),
+        // por la misma razón que el objeto de arriba.
+        const textoCampanaEsperaGuardado = {
+            horario: "Preparando la próxima temporada... Mantente atento a nuestras redes para conocer la próxima fecha especial.",
+            fecha: "Próxima fecha: [Coloca la Fecha] | ⏰ Horarios especiales en vivo."
+        };
+
         function intercambiarCampanaManual() {
+            aplicarEstadoCampana(!estadoCampanaSimulado);
+        }
+
+        // 🎯 Función reutilizable: aplica el estado de campaña (activa/espera) a
+        // toda la interfaz de la Sección 3. La llama tanto el botón manual del
+        // creador como la sincronización automática con Google Sheets.
+        function aplicarEstadoCampana(activo) {
             const contenedorEstado = document.getElementById('contenedor-campana-estado');
             const bloqueLinks = document.getElementById('enlaces-campana-live');
             const btnControl = document.getElementById('btn-control-campana');
@@ -874,7 +959,7 @@ function depositarEnElBuzonFinal() {
             const bFb = document.getElementById('boton-fb-campana');
             const botones = [bIg, bTt, bFb].filter(Boolean);
 
-            estadoCampanaSimulado = !estadoCampanaSimulado;
+            estadoCampanaSimulado = activo;
 
             if (estadoCampanaSimulado) {
                 if (bIg) bIg.href = DANIEL_CONFIG.linkInstagramCampana;
@@ -892,8 +977,8 @@ function depositarEnElBuzonFinal() {
                     contenedorEstado.classList.add('tableta-activa-pulsante');
                     contenedorEstado.innerHTML = `
                         <p style="font-size: 0.95rem; color: #fff; font-weight: 800;">🚀 ¡CAMPAÑAS ACTIVADAS!</p>
-                        <p style="font-size: 0.95rem; color: #fbbf24; margin-top: 4px; font-weight: 600;">Esta semana vamos más profundo. ¡Conéctate con nosotros!</p>
-                        <span style="font-size: 0.75rem; color: #cbd5e1; display: block; margin-top: 8px; font-family: monospace;">📅 Del 10 al 20 de Agosto | ⏰ 8:00 PM En Vivo</span>
+                        <p style="font-size: 0.95rem; color: #fbbf24; margin-top: 4px; font-weight: 600;">${textoCampanaActivaGuardado.horario}</p>
+                        <span style="font-size: 0.75rem; color: #cbd5e1; display: block; margin-top: 8px; font-family: monospace;">📅 ${textoCampanaActivaGuardado.fecha}</span>
                     `;
                 }
 
@@ -918,11 +1003,10 @@ function depositarEnElBuzonFinal() {
                     contenedorEstado.classList.remove('tableta-activa-pulsante');
                     contenedorEstado.innerHTML = `
                         <p style="font-size: 0.95rem; color: #94a3b8; line-height: 1.6;">
-                            💤 <span style="color: #fbbf24; font-weight: bold;">Modo Espera:</span>
-                            "Preparando la próxima temporada... Mantente atento a nuestras redes para conocer la próxima fecha especial."
+                            💤 <span style="color: #fbbf24; font-weight: bold;">Modo Espera:</span> "<span id="txt-horario-campana-espera">${textoCampanaEsperaGuardado.horario}</span>"
                         </p>
                         <span style="font-size: 0.7rem; color: #475569; display: block; margin-top: 6px; font-family: monospace;">
-                            📅 Próxima fecha: [Coloca la Fecha] | ⏰ Horarios especiales en vivo.
+                            📅 <span id="txt-fecha-campana-espera">${textoCampanaEsperaGuardado.fecha}</span>
                         </span>
                     `;
                 }
