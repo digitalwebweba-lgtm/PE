@@ -12,6 +12,15 @@
             correoDestinoUnico: "digitalwebweba@gmail.com",
            numerowhatsapp: "https://wa.me/qr/AM4P6KXZPHPLI1",
 
+    // =====================================================
+    // 📝 GOOGLE FORM: destino silencioso del Buzón de Oración
+    // y del Buzón de Preguntas Anónimas.
+    // Campos del formulario (en este orden): Nombre, Mensaje, Origen.
+    // =====================================================
+    urlGoogleFormRespuestas: "https://docs.google.com/forms/d/e/1FAIpQLSckADmBEYszVSnIf6UKKTecPcJxch8oMQ5Mp1OPXrvXnv-ytw/formResponse",
+    entryGoogleFormNombre: "entry.387434966",
+    entryGoogleFormMensaje: "entry.20875738",
+    entryGoogleFormOrigen: "entry.1026213736",
 
     
     // Links para los círculos del pie de página (Perfiles normales)
@@ -588,6 +597,29 @@
         }
         configurarEnlacesHazloVisible();
 
+        // ========================================================
+        // 📝 ENVÍO SILENCIOSO AL GOOGLE FORM (Buzón de Oración y
+        // Buzón de Preguntas Anónimas). Usa fetch en modo "no-cors"
+        // igual de invisible que el envío a Formspree: no hay
+        // redirección ni ventana emergente, el usuario nunca ve el
+        // formulario de Google.
+        // ========================================================
+        function enviarAGoogleFormSilencioso(nombre, mensaje, origen) {
+            const datos = new URLSearchParams();
+            datos.append(DANIEL_CONFIG.entryGoogleFormNombre, nombre);
+            datos.append(DANIEL_CONFIG.entryGoogleFormMensaje, mensaje);
+            datos.append(DANIEL_CONFIG.entryGoogleFormOrigen, origen);
+
+            fetch(DANIEL_CONFIG.urlGoogleFormRespuestas, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: datos.toString()
+            }).catch(() => {
+                // Silencioso: aunque falle la red, no interrumpimos al usuario.
+            });
+        }
+
   // ========================================================
 // ⚡ MOTOR UNIFICADO PARA TODOS LOS BOTONES (SECCIÓN 1)
 // ========================================================
@@ -620,7 +652,8 @@ function activarReservado() {
     }
 }
 
-// 📥 FUNCIÓN FINAL QUE ENVÍA EL NOMBRE Y EL ESTADO AL CORREO REAl
+// 📥 FUNCIÓN FINAL QUE ENVÍA EL NOMBRE Y EL ESTADO AL BUZÓN DE ORACIÓN
+// (Google Form, de forma silenciosa)
 function depositarEnElBuzonFinal() {
     const cuadroNombre = document.getElementById('nombre-oracion-usuario');
     const contenedorBuzonUnico = document.getElementById('contenedor-buzon-unico');
@@ -633,20 +666,11 @@ function depositarEnElBuzonFinal() {
 
     let nombreIngresado = cuadroNombre.value.trim();
 
-    // 📝 Redactamos el reporte ordenado para tu Gmail
-    let reporteCompleto = `📋 NUEVA NOTIFICACIÓN DE ORACIÓN\n\n` +
-                          `👤 Nombre del joven: ${nombreIngresado}\n` +
-                          `👉 Petición / Estado marcado: ${estadoSeleccionadoGlobal}\n\n` +
-                          `💡 Indicación pastoral: Por favor, levanta una oración específica por la vida de ${nombreIngresado} bajo esta necesidad.`;
-                          
-    // 🎯 ASUNTO CLARO: Así lo verás en tu bandeja de Gmail de golpe
-    let asuntoCorreo = `🙏 ${nombreIngresado} seleccionó: ${estadoSeleccionadoGlobal}`;
-
     // Alerta de éxito bonita para el usuario
     alert(`✨ Gracias ${nombreIngresado}, tu petición ha sido depositada de forma segura en el buzón. ¡Hagamos equipo con Jesús! ❤️`);
 
-    // Dispara el correo en silencio por detrás hacia tu cuenta de Formspree mqerrkkp
-    enviarPaqueteAlCorreoUnico(reporteCompleto, asuntoCorreo);
+    // Dispara el envío en silencio por detrás hacia el Google Form
+    enviarAGoogleFormSilencioso(nombreIngresado, estadoSeleccionadoGlobal, "Buzón de Oración - Hablemos con Jesús");
 
     // Limpiamos la casilla y ocultamos la caja para el siguiente joven
     cuadroNombre.value = "";
@@ -656,6 +680,7 @@ function depositarEnElBuzonFinal() {
 
 
         // 🧠 MOTOR UNIFICADO: CONECTA EL BUZÓN DE PREGUNTAS ANÓNIMAS (SECCIÓN 3)
+        // al mismo Google Form, de forma silenciosa.
         function enviarPreguntaAnonima() {
             const areaTexto = document.getElementById('texto-pregunta-anonima');
             const preguntaTexto = areaTexto.value.trim();
@@ -665,12 +690,17 @@ function depositarEnElBuzonFinal() {
                 return;
             }
 
-            // Enviamos la duda al mismo correo
-            enviarPaqueteAlCorreoUnico(preguntaTexto, "❓ Nueva Pregunta Anónima para el Podcast");
+            // Enviamos la duda al Google Form (sin nombre, es anónima)
+            enviarAGoogleFormSilencioso("Anónimo", preguntaTexto, "Pregunta Anónima - Hablemos de Él");
             areaTexto.value = "";
+
+            alert("¡Tu mensaje ha sido enviado con éxito! Tu duda la respondemos en la siguiente transmision,!No te la pierdas!.");
         }
 
         // 🚀 FUNCIÓN MAESTRA QUE ENVÍA TODO AL MISMO CORREO CON FORMSPREE
+        // (se mantiene disponible, aunque ya no se usa para el buzón de
+        // oración ni el buzón de preguntas anónimas, que ahora van al
+        // Google Form)
         function enviarPaqueteAlCorreoUnico(contenido, asunto) {
             const formulario = document.createElement('form');
             formulario.method = 'POST';
